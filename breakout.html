@@ -1,0 +1,153 @@
+<html>
+  <head></head>
+  <body>
+    <div id="game"></div>
+    <script src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
+    <script>
+        SCREEN_WIDTH = screen.availWidth - 30;
+        SCREEN_HEIGHT = screen.availHeight - 80;
+        PADDLE_WIDTH = 100;
+        NUM_BLOCKS_HORIZONTAL = 10;
+        NUM_BLOCKS_VERTICAL = 3;
+        BLOCK_WIDTH = SCREEN_WIDTH / NUM_BLOCKS_HORIZONTAL;
+        BLOCK_HEIGHT = SCREEN_HEIGHT / 10;
+        BALL_SIZE = 10;
+        
+        Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
+        Crafty.background('rgb(127,127,127)');
+
+        // Paddle
+        var paddle = Crafty.e("paddle, 2D, DOM, Color, Multiway")
+            .color('rgb(255,0,0)')
+            .attr({ x: (SCREEN_WIDTH / 2) - (PADDLE_WIDTH / 2), y: SCREEN_HEIGHT - 30, w: PADDLE_WIDTH, h: 10 })
+            .multiway(4, { A: 180, D: 0, LEFT_ARROW: 180, RIGHT_ARROW: 0 })
+            .bind('EnterFrame', function() {
+                if (this.x <= 0) {
+                    this.x = 0;
+                } else if (this.x + PADDLE_WIDTH >= SCREEN_WIDTH) {
+                    this.x = SCREEN_WIDTH - PADDLE_WIDTH;
+                }
+            });
+
+        // Bind mouse movement
+        Crafty.e("mouseTracking, 2D, Mouse, Touch, Canvas")
+            .attr({ w:SCREEN_WIDTH, h:SCREEN_HEIGHT, x:0, y:0 })
+            .bind("MouseMove", function(e) {
+                paddle.x = Crafty.mousePos.x - PADDLE_WIDTH / 2;
+            });  
+
+        // Ball
+        function createBall() {
+            return Crafty.e("ball, 2D, DOM, Color, Collision")
+                .color('rgb(0,0,255)')
+
+                .attr({ x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT / 2, w: BALL_SIZE, h: BALL_SIZE,
+                        dX: Crafty.math.randomInt(-4, 5),
+                        dY: Crafty.math.randomInt(-6, 6) })
+
+                .bind('EnterFrame', function () {
+                    // Hit walls 
+                    if (this.x <= 0 || this.x >= SCREEN_WIDTH)
+                        this.dX *= -1;
+
+                    // Hit ceiling
+                    if (this.y <= 0) {
+                        this.dY *= -1;
+                    }
+
+                    // Game over man, game over
+                    if (this.y >= SCREEN_HEIGHT) {
+                        this.destroy();
+                        /*
+                        this.y = SCREEN_HEIGHT / 2;
+                        this.x = SCREEN_WIDTH / 2;
+                        this.dX = Crafty.math.randomInt(2, 5);
+                        this.dY = 6;
+                        */
+                    }
+
+                    this.x += this.dX;
+                    this.y += this.dY;
+                })
+
+                .onHit('paddle', function() {
+                    // Flip ball's direction + speed up
+                    if (this.dY > 0) {
+                        this.dY *= -1;
+                        this.dY *= 1.05;
+                    }
+
+                    // Change ball angle
+                    ballX = this.x + BALL_SIZE / 2;
+                    paddleX = paddle.x + PADDLE_WIDTH / 2;
+                    this.dX += 5 * (ballX - paddleX) / PADDLE_WIDTH;
+                })
+
+                .onHit('block', function() {
+                    // TODO figure out how to determine which side collided
+                    this.dY *= 1.05;
+                    this.dY *= -1;
+                })
+
+                .onHit('moreBalls', function() {
+                    Crafty.e()
+                });
+        }
+        
+        createBall();
+
+    for (var i = 0; i <= NUM_BLOCKS_HORIZONTAL; i++) {
+        for (var j = 0; j < NUM_BLOCKS_VERTICAL; j++) {
+            var r = Crafty.math.randomInt(0, 255);
+            var g = Crafty.math.randomInt(0, 255);
+            var b = Crafty.math.randomInt(0, 255);
+            Crafty.e("block, 2D, DOM, Color, Collision")
+                .color('rgb(' + r + ',' + g + ',' + b + ')')
+
+                .attr({ x: BLOCK_WIDTH * i, y: BLOCK_HEIGHT * j, w: BLOCK_WIDTH, h: BLOCK_HEIGHT })
+
+                .onHit('ball', function () {
+
+                    // Chance of power-up
+                    if (Crafty.math.randomInt(0, 1) == 0) {
+                        Crafty.e("moreBalls, 2D, DOM, Color, Collision")
+                            .color('rgb(' + r + ',' + g + ',' + b + ')')
+                            .attr({ x: this.x, y: this.y, w: 20, h: 10 })
+                            .bind('EnterFrame', function() {
+                                this.y += 10;
+                            })
+                            .onHit('paddle', function() {
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                createBall();
+                                this.destroy();
+                            });
+                    }
+                    this.destroy();
+                });
+        }
+    } 
+    </script>
+  </body>
+</html>
