@@ -1,8 +1,11 @@
 <html>
-  <head></head>
+  <head>
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="mobile-web-app-capable" content="yes">
+  </head>
   <body>
     <div id="game"></div>
-    <script src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
+    <script src="crafty-min.js"></script>
     <script>
         SCREEN_WIDTH = screen.availWidth - 30;
         SCREEN_HEIGHT = screen.availHeight - 80;
@@ -12,6 +15,17 @@
         BLOCK_WIDTH = SCREEN_WIDTH / NUM_BLOCKS_HORIZONTAL;
         BLOCK_HEIGHT = SCREEN_HEIGHT / 10;
         BALL_SIZE = 10;
+
+        var width = screen.height;
+        var height = screen.width;
+        var screenRatio;
+        var realWidth;
+        var realHeight;
+        if(width>height){realWidth=width;realHeight=height;screenRatio=(height/width);}
+        else{realWidth=height;realHeight=width;screenRatio=(width/height);}
+
+        SCREEN_WIDTH = realWidth;
+        SCREEN_HEIGHT = realHeight;
         
         Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
         Crafty.background('rgb(127,127,127)');
