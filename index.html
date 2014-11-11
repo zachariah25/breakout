@@ -20,9 +20,10 @@
         Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
         Crafty.background('rgb(127,127,127)');
 
+        Crafty.sprite("paddle.png", {paddle_sprite:[0,0,100,32]});
+
         // Paddle
-        var paddle = Crafty.e("paddle, 2D, DOM, Color, Multiway")
-            .color('rgb(255,0,0)')
+        var paddle = Crafty.e("paddle, 2D, DOM, paddle_sprite, Multiway")
             .attr({ x: (SCREEN_WIDTH / 2) - (PADDLE_WIDTH / 2), y: SCREEN_HEIGHT - 30, w: PADDLE_WIDTH, h: 10 })
             .multiway(4, { A: 180, D: 0, LEFT_ARROW: 180, RIGHT_ARROW: 0 })
             .bind('EnterFrame', function() {
